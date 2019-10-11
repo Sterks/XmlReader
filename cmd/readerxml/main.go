@@ -2,23 +2,22 @@ package main
 
 import (
 	"log"
-	"mod/internal/app/readerxml"
 
 	"github.com/BurntSushi/toml"
+	"github.com/Sterks/XmlReader/internal/app/readerxml"
 )
 
 var (
 	configPath string
 )
 
-func init() {
-	configPath = "./configs/reader.toml"
-}
-
 func main() {
 	config := readerxml.NewConfig()
-	_, err := toml.DecodeFile(configPath, config)
+	_, err := toml.DecodeFile("configs/reader.toml", config)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	s := readerxml.New(config)
+	s.Start()
 }
