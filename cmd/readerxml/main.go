@@ -13,7 +13,7 @@ var (
 
 func main() {
 	config := readerxml.NewConfig()
-	_, err := toml.DecodeFile("configs/reader.toml", config)
+	_, err := toml.DecodeFile("/Users/drunov/GoProject/XmlReader/configs/reader.toml", config)
 	if err != nil {
 		log.Fatal(err)
 	}
