@@ -13,7 +13,7 @@ import (
 type ReaderXML struct {
 	config *Config
 	logger *logrus.Logger
-	db     *db.ConnectionString
+	db     *db.PgDb
 }
 
 // New создание нового экземпляра
@@ -25,9 +25,25 @@ func New(config *Config) *ReaderXML {
 }
 
 // Start ...
-func (s *ReaderXML) Start() {
-	s.logger.Info("Запуск процесса ...")
+func (s *ReaderXML) Start() error {
+	if err := s.configureLogger(); err != nil {
+		return err
+	}
+	s.logger.Info("Starting server")
+	if err := s.db.CheckDB(); err != nil {
+		s.logger.Error("Большие проблемы с базой!")
+	}
 	s.waitForSignal()
+	return nil
+}
+
+func (s *ReaderXML) configureLogger() error {
+	level, err := logrus.ParseLevel(s.config.LogLevel)
+	if err != nil {
+		return err
+	}
+	s.logger.SetLevel(level)
+	return nil
 }
 
 func (s *ReaderXML) waitForSignal() {
@@ -35,5 +51,4 @@ func (s *ReaderXML) waitForSignal() {
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
 	g := <-ch
 	s.logger.Info("Сигнал на отмену/", g, "/exiting")
-	// log.("Сигнал на отмену: %v, exiting.", s)
 }
