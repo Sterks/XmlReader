@@ -34,6 +34,7 @@ func main() {
 		logrus.Error("Нет подключения к FTP!")
 	}
 	fmt.Println(ftp)
+	p.GetFiles(ftp)
 
 	config := readerxml.NewConfig()
 	_, err = toml.DecodeFile(ConfigPath, &config)

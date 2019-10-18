@@ -3,15 +3,18 @@ package configuration
 //Configuration ...
 type Configuration struct {
 	LogLevel         string `toml:"log_level"`
-	ConnectionString string `toml:"ConnectionString"`
-	Ftp_connect      string `toml:ftp_connect`
+	ConnectionString string `toml:"connection_string"`
+	FtpConnect       string `toml:"ftp_connect"`
+	RootDir          string `toml:"root_directory"`
+	DocType          string `toml:"doc_type"`
 }
 
 // NewConfig дефолтная конфигурация
 func NewConfig() *Configuration {
 	return &Configuration{
 		LogLevel:         "debug",
-		ConnectionString: "nil",
-		Ftp_connect:      "nil",
+		ConnectionString: "",
+		FtpConnect:       "",
+		RootDir:          "",
 	}
 }
