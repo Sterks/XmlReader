@@ -11,7 +11,7 @@ import (
 	"github.com/Sterks/XmlReader/internal/app/configuration"
 	"github.com/Sterks/XmlReader/internal/app/db"
 	model "github.com/Sterks/XmlReader/internal/app/models"
-	_ "github.com/lib/pq"
+	_ "github.com/jackc/pgx"
 	"github.com/secsy/goftp"
 	"github.com/sirupsen/logrus"
 )
