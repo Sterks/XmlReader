@@ -1,5 +1,5 @@
 log_level = "debug"
-connection_string = "host=localhost dbname=readerxml_dev user=postgres sslmode=disable"
+connection_string = "host=localhost dbname=readerxml_dev user=postgres password=596run49 sslmode=disable"
 ftp_connect = "ftp.zakupki.gov.ru:21"
 root_directory = "/fcs_regions"
 doc_type = "notifications"
