@@ -16,5 +16,6 @@ func NewConfig() *Configuration {
 		ConnectionString: "",
 		FtpConnect:       "",
 		RootDir:          "",
+		DocType:          "",
 	}
 }

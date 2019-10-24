@@ -1,16 +1,18 @@
 package ftpdownloader
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path"
 	"path/filepath"
 	"sync/atomic"
+	"time"
 
 	"github.com/Sterks/XmlReader/internal/app/configuration"
+	"github.com/Sterks/XmlReader/internal/app/db"
+	model "github.com/Sterks/XmlReader/internal/app/models"
+	_ "github.com/lib/pq"
 	"github.com/secsy/goftp"
-
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,6 +21,7 @@ type FtpDownloader struct {
 	config *configuration.Configuration
 	logger *logrus.Logger
 	ftp    *goftp.Client
+	db     *db.PgDb
 }
 
 //New ...
@@ -27,6 +30,15 @@ func New(con *configuration.Configuration) *FtpDownloader {
 		config: con,
 		logger: logrus.New(),
 	}
+}
+
+// Start ...
+func (f *FtpDownloader) Start() error {
+	if err := f.ConfigureDb(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (f *FtpDownloader) configureLogger() {
@@ -52,15 +64,16 @@ func (f *FtpDownloader) Connect() (*goftp.Client, error) {
 }
 
 //GetFiles ...
-func (f *FtpDownloader) GetFiles(client *goftp.Client) {
+func (f *FtpDownloader) GetFiles(client *goftp.Client, from time.Time, to time.Time) []model.FileInfo {
 	rootPath := f.config.RootDir
 	docType := f.config.DocType
+
 	listFiles, err := client.ReadDir(rootPath)
 	if err != nil {
 		logrus.Errorf("Не возможно прочитать директорию - %s", err)
 	}
 
-	// маммив директорий внутри которых нужен поиск
+	// массив директорий внутри которых нужен поиск
 	var lister []os.FileInfo
 
 	for _, value := range listFiles {
@@ -69,6 +82,8 @@ func (f *FtpDownloader) GetFiles(client *goftp.Client) {
 		}
 	}
 
+	var fileinfo model.FileInfo
+	var fileinfolist []model.FileInfo
 	for _, value := range lister {
 		Walk(client, rootPath+"/"+value.Name()+"/"+docType, func(fullpath string, info os.FileInfo, err error) error {
 			if err != nil {
@@ -77,15 +92,23 @@ func (f *FtpDownloader) GetFiles(client *goftp.Client) {
 				}
 				return err
 			}
-			fmt.Println(fullpath)
+			// fmt.Println(fullpath)
+			fileinfo.FileName = info.Name()
+			fileinfo.FilePath = fullpath
+			fileinfo.FileSize = info.Size()
+			fileinfo.FileDateMod = info.ModTime()
+			fileinfo.FileArea = value.Name()
+			fileinfo.FileIsDir = info.IsDir()
+			fileinfolist = append(fileinfolist, fileinfo)
+			// massStr = append(massStr, fullpath)
 			return nil
-		})
+		}, from, to)
 	}
-
+	return fileinfolist
 }
 
 //Walk Рекурсивный перебор
-func Walk(client *goftp.Client, root string, walkFn filepath.WalkFunc) (ret error) {
+func Walk(client *goftp.Client, root string, walkFn filepath.WalkFunc, from time.Time, to time.Time) (ret error) {
 	dirsToCheck := make(chan string, 100)
 
 	var workCount int32 = 1
@@ -104,13 +127,15 @@ func Walk(client *goftp.Client, root string, walkFn filepath.WalkFunc) (ret erro
 			}
 
 			for _, file := range files {
-				if err = walkFn(path.Join(dir, file.Name()), file, nil); err != nil {
-					if file.IsDir() && err == filepath.SkipDir {
-						continue
+				if file.ModTime().After(from) && file.ModTime().Before(to) && file.IsDir() == false {
+					if err = walkFn(path.Join(dir, file.Name()), file, nil); err != nil {
+						if file.IsDir() && err == filepath.SkipDir {
+							continue
+						}
+						ret = err
+						close(dirsToCheck)
+						return
 					}
-					ret = err
-					close(dirsToCheck)
-					return
 				}
 
 				if file.IsDir() {
@@ -127,4 +152,14 @@ func Walk(client *goftp.Client, root string, walkFn filepath.WalkFunc) (ret erro
 	}
 
 	return ret
+}
+
+// ConfigureDb ...
+func (f *FtpDownloader) ConfigureDb() error {
+	st := db.New(f.config)
+	if err := st.Open(); err != nil {
+		return err
+	}
+	f.db = st
+	return nil
 }

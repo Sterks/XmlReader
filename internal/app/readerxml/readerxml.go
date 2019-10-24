@@ -30,10 +30,10 @@ func (s *ReaderXML) Start() error {
 		return err
 	}
 	s.logger.Info("Starting server")
-	if err := s.db.CheckDB(); err != nil {
-		s.logger.Error("Большие проблемы с базой!")
-	}
-	s.waitForSignal()
+	// if err := s.db.CheckDB(); err != nil {
+	// 	s.logger.Error("Нет подключения к базе данных!")
+	// }
+	// s.waitForSignal()
 	return nil
 }
 
