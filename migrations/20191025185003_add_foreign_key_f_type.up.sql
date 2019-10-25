@@ -1,1 +1,0 @@
-ALTER TABLE public."Files" ADD CONSTRAINT files_fk FOREIGN KEY (f_type) REFERENCES public."FilesTypes"(ft_id) ON DELETE CASCADE ON UPDATE CASCADE;

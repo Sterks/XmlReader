@@ -1,1 +1,0 @@
-alter table "Files" add column f_file_is_dir varchar;
