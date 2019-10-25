@@ -4,15 +4,16 @@ import (
 	"database/sql"
 
 	"github.com/Sterks/XmlReader/internal/app/configuration"
-	_ "github.com/lib/pq"
+	_ "github.com/lib/pq" ///
 	"github.com/sirupsen/logrus"
 )
 
 //PgDb ...
 type PgDb struct {
-	logger logrus.Logger
-	db     *sql.DB
-	config *configuration.Configuration
+	logger          logrus.Logger
+	db              *sql.DB
+	config          *configuration.Configuration
+	filesRepository *FilesRepository
 }
 
 // New ...
@@ -72,4 +73,18 @@ func (p *PgDb) ConfigureLogger() error {
 	}
 	p.logger.SetLevel(level)
 	return nil
+}
+
+//File ...
+func (p *PgDb) File() *FilesRepository {
+	if p.filesRepository != nil {
+		return p.filesRepository
+	}
+
+	p.filesRepository = &FilesRepository{
+		db: p,
+	}
+
+	return p.filesRepository
+
 }

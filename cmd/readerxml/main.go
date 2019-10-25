@@ -68,7 +68,7 @@ func main() {
 	listFiles := f.GetFiles(ftp, common.FromDate(), common.ToDate())
 	for _, value := range listFiles {
 		fmt.Println(value)
-		// p.db.Create()
-		// p.DownloadFile(value)
+		ext := common.FileExt(value.FilePath)
+		f.AdderRezultDbAndFs(&value, ext)
 	}
 }

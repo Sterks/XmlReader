@@ -1,6 +1,7 @@
 package ftpdownloader
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path"
@@ -11,7 +12,7 @@ import (
 	"github.com/Sterks/XmlReader/internal/app/configuration"
 	"github.com/Sterks/XmlReader/internal/app/db"
 	model "github.com/Sterks/XmlReader/internal/app/models"
-	_ "github.com/jackc/pgx"
+	_ "github.com/jackc/pgx" // ...
 	"github.com/secsy/goftp"
 	"github.com/sirupsen/logrus"
 )
@@ -152,6 +153,15 @@ func Walk(client *goftp.Client, root string, walkFn filepath.WalkFunc, from time
 	}
 
 	return ret
+}
+
+//AdderRezultDbAndFs ...
+func (f *FtpDownloader) AdderRezultDbAndFs(value *model.FileInfo, ext string) {
+	result, err := f.db.File().Create(value, ext)
+	if err != nil {
+		logrus.Error(err)
+	}
+	fmt.Println(result)
 }
 
 // ConfigureDb ...
