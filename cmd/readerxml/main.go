@@ -20,6 +20,7 @@ var (
 
 func init() {
 	flag.StringVar(&ConfigPath, "config-path", "/Users/drunov/GoProject/XmlReader/configs/reader.toml", "path config file")
+
 }
 
 func main() {

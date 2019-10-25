@@ -1,1 +1,1 @@
-alter table files drop column f_fullpath;
+alter table "Files" drop column f_fullpath;

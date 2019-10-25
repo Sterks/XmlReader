@@ -1,4 +1,4 @@
-create table Files(
+create table "Files"(
     f_id bigserial not null primary key,
     f_parent int,
     f_name varchar,

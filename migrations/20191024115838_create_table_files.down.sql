@@ -1,1 +1,1 @@
-drop table Files;
+drop table "Files";

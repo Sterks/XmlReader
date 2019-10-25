@@ -1,1 +1,1 @@
-alter table files add column f_fullpath varchar;
+alter table "Files" add column f_fullpath varchar;
