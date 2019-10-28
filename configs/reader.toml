@@ -3,3 +3,4 @@ connection_string = "host=localhost dbname=readerxml_dev user=postgres password=
 ftp_connect = "ftp.zakupki.gov.ru:21"
 root_directory = "/fcs_regions"
 doc_type = "notifications"
+file_dir = "./Files"

@@ -88,3 +88,9 @@ func (p *PgDb) File() *FilesRepository {
 	return p.filesRepository
 
 }
+
+//GetLastFiles ...
+func (p *PgDb) GetLastFiles() int {
+	number := p.filesRepository.GetIDFile()
+	return number
+}

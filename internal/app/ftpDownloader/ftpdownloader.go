@@ -12,6 +12,7 @@ import (
 	"github.com/Sterks/XmlReader/internal/app/configuration"
 	"github.com/Sterks/XmlReader/internal/app/db"
 	model "github.com/Sterks/XmlReader/internal/app/models"
+	"github.com/Sterks/XmlReader/internal/common"
 	_ "github.com/jackc/pgx" // ...
 	"github.com/secsy/goftp"
 	"github.com/sirupsen/logrus"
@@ -156,7 +157,8 @@ func Walk(client *goftp.Client, root string, walkFn filepath.WalkFunc, from time
 }
 
 //AdderRezultDbAndFs ...
-func (f *FtpDownloader) AdderRezultDbAndFs(value *model.FileInfo, ext string) {
+func (f *FtpDownloader) AdderRezultDbAndFs(value *model.FileInfo) {
+	ext := common.FileExt(value.FilePath)
 	result, err := f.db.File().Create(value, ext)
 	if err != nil {
 		logrus.Error(err)
@@ -172,4 +174,14 @@ func (f *FtpDownloader) ConfigureDb() error {
 	}
 	f.db = st
 	return nil
+}
+
+// SaveResultToDisk ...
+func (f *FtpDownloader) SaveResultToDisk() {
+	// fileDir := f.config.FileDir
+	// if _, err := os.Stat(fileDir); err != nil {
+	// 	os.MkdirAll(fileDir, 0755)
+	// }
+	fmt.Println(f.db.GetLastFiles())
+	// return nil
 }

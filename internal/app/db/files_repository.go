@@ -47,3 +47,10 @@ func (r *FilesRepository) Create(f *model.FileInfo, ext string) (*model.FileInfo
 	fmt.Println(res)
 	return f, nil
 }
+
+// GetIDFile ...
+func (r *FilesRepository) GetIDFile() int {
+	var number int
+	_ = r.db.db.QueryRow(`select nextval('public."Files_check"')`).Scan(&number)
+	return number
+}

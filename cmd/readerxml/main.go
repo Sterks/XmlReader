@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 
 	"github.com/BurntSushi/toml"
 
@@ -67,8 +66,8 @@ func main() {
 	// fmt.Println(ftp)
 	listFiles := f.GetFiles(ftp, common.FromDate(), common.ToDate())
 	for _, value := range listFiles {
-		fmt.Println(value)
-		ext := common.FileExt(value.FilePath)
-		f.AdderRezultDbAndFs(&value, ext)
+		// fmt.Println(value)
+		f.AdderRezultDbAndFs(&value)
+		f.SaveResultToDisk()
 	}
 }
