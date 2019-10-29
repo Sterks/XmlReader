@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 	"sync/atomic"
 	"time"
 
@@ -178,10 +179,9 @@ func (f *FtpDownloader) ConfigureDb() error {
 
 // SaveResultToDisk ...
 func (f *FtpDownloader) SaveResultToDisk() {
-	// fileDir := f.config.FileDir
-	// if _, err := os.Stat(fileDir); err != nil {
-	// 	os.MkdirAll(fileDir, 0755)
-	// }
-	fmt.Println(f.db.GetLastFiles())
-	// return nil
+	dd := f.db.ConnectionDB()
+	l := common.GetIDLastDB(dd, f.config)
+	stringID := strconv.Itoa(l)
+	m := common.CreateFolder(f.config, l)
+	os.Create(f.config.FileDir + "/" + m + "/" + stringID)
 }

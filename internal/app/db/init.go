@@ -43,28 +43,6 @@ func (p *PgDb) Close() {
 	p.db.Close()
 }
 
-//CheckDB ...
-// func (p *PgDb) CheckDB() error {
-// 	// if err := p.configureLogger(); err != nil {
-// 	// 	return err
-// 	// }
-// 	// toml.DecodeFile("/Users/drunov/GoProject/XmlReader/configs/reader.toml", &config)
-// 	db, err := sqlx.Connect("postgres", "postgres://postgres:596run49@localhost/postgres?sslmode=disable")
-// 	if err != nil {
-// 		log.Fatalln(err)
-// 	}
-// 	var k []int
-// 	if err = db.Select(&k, `select "AR_Id" from "ArchFiles" limit 1`); err != nil {
-// 		log.Fatalln(err)
-// 	} else {
-// 		if k[0] > 0 {
-// 			//p.logger.Info("База данных доступна!")
-// 			logrus.Info("База данных доступна!")
-// 		}
-// 	}
-// 	return nil
-// }
-
 // ConfigureLogger ...
 func (p *PgDb) ConfigureLogger() error {
 	level, err := logrus.ParseLevel("debug")
@@ -73,6 +51,11 @@ func (p *PgDb) ConfigureLogger() error {
 	}
 	p.logger.SetLevel(level)
 	return nil
+}
+
+//ConnectionDB ...
+func (p *PgDb) ConnectionDB() *sql.DB {
+	return p.db
 }
 
 //File ...

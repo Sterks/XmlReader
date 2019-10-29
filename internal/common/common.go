@@ -1,8 +1,15 @@
 package common
 
 import (
+	"database/sql"
+	"fmt"
+	"log"
+	"os"
 	"path/filepath"
+	"strconv"
 	"time"
+
+	"github.com/Sterks/XmlReader/internal/app/configuration"
 )
 
 //FileExt возвращает расширение файла
@@ -32,3 +39,50 @@ func ToDate() time.Time {
 	return to
 }
 
+// GetIDLastDB ...
+func GetIDLastDB(db *sql.DB, config *configuration.Configuration) int {
+	var number int
+	_ = db.QueryRow(`select currval('public."Files_f_id_seq"')`).Scan(&number)
+	return number
+}
+
+//GenerateID ...
+func GenerateID(ident int) string {
+
+	word := strconv.Itoa(ident)
+	ch := len(word)
+	nool := 12 - ch
+	var ap string
+	ap = word
+	for i := 0; i < nool; i++ {
+		ap = fmt.Sprintf("0%s", ap)
+	}
+	return ap
+}
+
+// CreateFolder ...
+func CreateFolder(config *configuration.Configuration, ident int) string {
+	saveDir := config.FileDir
+	if err := os.MkdirAll(saveDir, 0755); err != nil {
+		log.Fatal(err)
+	}
+	stringID := GenerateID(ident)
+	lv1 := fmt.Sprint(stringID[0:3])
+	lv2 := fmt.Sprint(stringID[3:6])
+	lv3 := fmt.Sprint(stringID[6:9])
+	// lv4 := fmt.Sprintln(stringID[9:12])
+	if err := os.MkdirAll(saveDir+"/"+lv1, 0755); err != nil {
+		log.Fatal(err)
+	}
+	if err := os.MkdirAll(saveDir+"/"+lv1+"/"+lv2, 0755); err != nil {
+		log.Fatal(err)
+	}
+	if err := os.MkdirAll(saveDir+"/"+lv1+"/"+lv2+"/"+lv3, 0755); err != nil {
+		log.Fatal(err)
+	}
+	// if err := os.MkdirAll(lv4, 0755); err != nil {
+	// 	log.Fatal(err)
+	// }
+	path := fmt.Sprintf("%s/%s/%s/", lv1, lv2, lv3)
+	return path
+}

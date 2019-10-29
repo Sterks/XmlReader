@@ -21,22 +21,6 @@ var (
 
 func init() {
 	flag.StringVar(&ConfigPath, "config-path", "/Users/drunov/GoProject/XmlReader/configs/reader.toml", "path config file")
-
-	// db, err := sql.Open("postgres", "postgres://postgres:596run49@127.0.0.1:5432/readerxml_dev?sslmode=disable")
-	// if err != nil {
-	// 	logrus.Error(err)
-	// }
-	// driver, err := postgres.WithInstance(db, &postgres.Config{})
-	// if err != nil {
-	// 	logrus.Error(err)
-	// }
-	// m, err := migrate.NewWithDatabaseInstance(
-	// 	"file://migrations",
-	// 	"postgres", driver)
-	// if err != nil {
-	// 	logrus.Error(err)
-	// }
-	// m.Steps(1)
 }
 
 func main() {
