@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/Sterks/XmlReader/internal/app/configuration"
+	model "github.com/Sterks/XmlReader/internal/app/models"
 	_ "github.com/lib/pq" ///
 	"github.com/sirupsen/logrus"
 )
@@ -76,4 +77,10 @@ func (p *PgDb) File() *FilesRepository {
 func (p *PgDb) GetLastFiles() int {
 	number := p.filesRepository.GetIDFile()
 	return number
+}
+
+//LastNoteDb ...
+func (p *PgDb) LastNoteDb(ident int) model.FileInfo {
+	line := p.File().GetFileInfo(ident)
+	return line
 }

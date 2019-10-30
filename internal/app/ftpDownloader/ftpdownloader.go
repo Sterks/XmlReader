@@ -51,6 +51,10 @@ func (f *FtpDownloader) configureLogger() {
 	}
 
 	f.logger.SetLevel(level)
+	customFormatter := new(logrus.TextFormatter)
+	customFormatter.TimestampFormat = "2006-01-02 15:04:05"
+	f.logger.SetFormatter(customFormatter)
+	customFormatter.FullTimestamp = true
 }
 
 //Connect ...
@@ -183,5 +187,26 @@ func (f *FtpDownloader) SaveResultToDisk() {
 	l := common.GetIDLastDB(dd, f.config)
 	stringID := strconv.Itoa(l)
 	m := common.CreateFolder(f.config, l)
-	os.Create(f.config.FileDir + "/" + m + "/" + stringID)
+	fil, err := os.Create(f.config.FileDir + "/" + m + "/" + stringID)
+	if err != nil {
+		logrus.Errorf("Не могу создать файл %s", err)
+	}
+	line := f.db.LastNoteDb(l)
+	connect, err := f.Connect()
+	if err != nil {
+		logrus.Errorf("Нет подключения к FTP серверу %v", err)
+	}
+	f.DownloaderFiles(connect, line, fil)
+}
+
+// DownloaderFiles ...
+func (f *FtpDownloader) DownloaderFiles(connect *goftp.Client, line model.FileInfo, fil *os.File) error {
+	if err := connect.Retrieve(line.FilePath, fil); err != nil {
+		logrus.Errorf("Не могу соединится с сервером %s", err)
+		if err.(goftp.Error).Code() == 550 {
+			return nil
+		}
+		return err
+	}
+	return nil
 }

@@ -54,3 +54,10 @@ func (r *FilesRepository) GetIDFile() int {
 	_ = r.db.db.QueryRow(`select nextval('public."Files_check"')`).Scan(&number)
 	return number
 }
+
+// GetFileInfo ...
+func (r *FilesRepository) GetFileInfo(ident int) model.FileInfo {
+	var line model.FileInfo
+	_ = r.db.db.QueryRow(`select f_id, f_fullpath from "Files" where f_id = $1`, ident).Scan(&line.ID, &line.FilePath)
+	return line
+}

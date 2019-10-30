@@ -43,6 +43,10 @@ func (s *ReaderXML) configureLogger() error {
 		return err
 	}
 	s.logger.SetLevel(level)
+	customFormatter := new(logrus.TextFormatter)
+	customFormatter.TimestampFormat = "2006-01-02 15:04:05"
+	s.logger.SetFormatter(customFormatter)
+	customFormatter.FullTimestamp = true
 	return nil
 }
 
