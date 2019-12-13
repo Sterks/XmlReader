@@ -1,8 +1,11 @@
 package common
 
 import (
+	"crypto/md5"
 	"database/sql"
+	"encoding/hex"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -85,4 +88,33 @@ func CreateFolder(config *configuration.Configuration, ident int) string {
 	// }
 	path := fmt.Sprintf("%s/%s/%s/", lv1, lv2, lv3)
 	return path
+}
+
+// GetLocalPath ...
+func GetLocalPath(config *configuration.Configuration, ident int) string {
+	rootPath := config.FileDir
+	word := strconv.Itoa(ident)
+	stringID := GenerateID(ident)
+	lv1 := fmt.Sprint(stringID[0:3])
+	lv2 := fmt.Sprint(stringID[3:6])
+	lv3 := fmt.Sprint(stringID[6:9])
+	s := fmt.Sprint(rootPath + "/" + lv1 + "/" + lv2 + "/" + lv3 + "/" + word)
+	return s
+}
+
+// Hash ...
+func Hash(path string) string {
+	file, err := os.Open(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	h := md5.New()
+	if _, err := io.Copy(h, file); err != nil {
+		log.Fatal(err)
+	}
+	hash := hex.EncodeToString(h.Sum(nil))
+
+	return hash
 }

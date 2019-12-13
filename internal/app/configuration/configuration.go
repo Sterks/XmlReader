@@ -7,7 +7,7 @@ type Configuration struct {
 	FtpConnect       string `toml:"ftp_connect"`
 	RootDir          string `toml:"root_directory"`
 	DocType          string `toml:"doc_type"`
-	FileDir 		 string `toml:"file_dir"`
+	FileDir          string `toml:"file_dir"`
 }
 
 // NewConfig дефолтная конфигурация
@@ -18,6 +18,6 @@ func NewConfig() *Configuration {
 		FtpConnect:       "",
 		RootDir:          "",
 		DocType:          "",
-		FileDir:		  "",
+		FileDir:          "",
 	}
 }

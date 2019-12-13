@@ -4,10 +4,9 @@ import (
 	"flag"
 
 	"github.com/BurntSushi/toml"
-
+	"github.com/Sterks/XmlReader/cmd/readerxml/router"
 	"github.com/Sterks/XmlReader/internal/app/configuration"
 	ftpdownloader "github.com/Sterks/XmlReader/internal/app/ftpDownloader"
-	"github.com/Sterks/XmlReader/internal/app/readerxml"
 	"github.com/Sterks/XmlReader/internal/common"
 	_ "github.com/lib/pq"
 	_ "github.com/mattes/migrate/source/file"
@@ -25,21 +24,19 @@ func init() {
 
 func main() {
 	flag.Parse()
+	router.StartServer()
+	// StartServices()
+}
+
+// StartServices ...
+func StartServices() {
+	// Получение файлов
 	con := configuration.NewConfig()
-	_, err2 := toml.DecodeFile(ConfigPath, &con)
-	if err2 != nil {
-		logrus.Error(err2)
-	}
-	config := readerxml.NewConfig()
-	_, err := toml.DecodeFile(ConfigPath, &config)
+	f := ftpdownloader.New(con)
+	_, err := toml.DecodeFile(ConfigPath, &con)
 	if err != nil {
 		logrus.Error(err)
 	}
-	s := readerxml.New(config)
-	s.Start()
-
-	// Получение файлов
-	f := ftpdownloader.New(con)
 	if err := f.Start(); err != nil {
 		logrus.Errorf("Не стартонул %v", err)
 	}
@@ -47,7 +44,6 @@ func main() {
 	if err != nil {
 		logrus.Error("Нет подключения к FTP!")
 	}
-	// fmt.Println(ftp)
 	listFiles := f.GetFiles(ftp, common.FromDate(), common.ToDate())
 	for _, value := range listFiles {
 		// fmt.Println(value)
@@ -55,3 +51,15 @@ func main() {
 		f.SaveResultToDisk()
 	}
 }
+
+// _, err2 := toml.DecodeFile(ConfigPath, &con)
+// if err2 != nil {
+// 	logrus.Error(err2)
+// }
+// config := readerxml.NewConfig()
+// _, err := toml.DecodeFile(ConfigPath, &config)
+// if err != nil {
+// 	logrus.Error(err)
+// }
+// s := readerxml.New(config)
+// s.Start()

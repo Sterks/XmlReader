@@ -84,3 +84,8 @@ func (p *PgDb) LastNoteDb(ident int) model.FileInfo {
 	line := p.File().GetFileInfo(ident)
 	return line
 }
+
+// UpdateHash ...
+func (p *PgDb) UpdateHash(hash string, ident int) {
+	p.File().UpdateHashInfo(hash, ident)
+}

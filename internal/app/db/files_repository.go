@@ -61,3 +61,12 @@ func (r *FilesRepository) GetFileInfo(ident int) model.FileInfo {
 	_ = r.db.db.QueryRow(`select f_id, f_fullpath from "Files" where f_id = $1`, ident).Scan(&line.ID, &line.FilePath)
 	return line
 }
+
+// UpdateHashInfo ...
+func (r *FilesRepository) UpdateHashInfo(hash string, ident int) {
+	sqlStatement := `update "Files" set f_hash = $2 where f_id = $1;`
+	_, err := r.db.db.Exec(sqlStatement, ident, hash)
+	if err != nil {
+		logrus.Errorf("Не могу обновить данные о хеше %s", err)
+	}
+}

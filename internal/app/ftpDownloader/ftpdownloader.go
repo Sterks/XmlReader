@@ -202,11 +202,15 @@ func (f *FtpDownloader) SaveResultToDisk() {
 // DownloaderFiles ...
 func (f *FtpDownloader) DownloaderFiles(connect *goftp.Client, line model.FileInfo, fil *os.File) error {
 	if err := connect.Retrieve(line.FilePath, fil); err != nil {
-		logrus.Errorf("Не могу соединится с сервером %s", err)
+		logrus.Errorf("Не могу соединится с сервером к FTP серверу %s", err)
 		if err.(goftp.Error).Code() == 550 {
 			return nil
 		}
 		return err
 	}
+	defer fil.Close()
+	stringLocal := common.GetLocalPath(f.config, line.ID)
+	hash := common.Hash(stringLocal)
+	f.db.UpdateHash(hash, line.ID)
 	return nil
 }
